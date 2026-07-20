@@ -1,0 +1,6 @@
+Fotos del equipo (ya puestas, sacadas del WordPress antiguo):
+  gilda.jpeg, tania.jpeg, asly.jpeg, grisel.jpeg
+
+Para cambiar una foto: reemplaza el archivo por otro con el mismo nombre.
+Los nombres/cargos de cada persona se editan en src/pages/Equipo.tsx
+Si una foto falta, la página muestra un recuadro gris con "Foto".
