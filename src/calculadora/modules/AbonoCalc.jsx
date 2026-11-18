@@ -1,0 +1,182 @@
+import { useState } from 'react'
+import { calcularCapitalDesdeAbono, calcularCapitalDesdeAbonoJudicial, formatCLP, formatMiles, parseCLPInput } from '../utils/calculos'
+import { guardarUF, cargarUF } from '../utils/ufStorage'
+import CopyBtn from '../components/CopyBtn'
+import BtnTraerUF from '../components/BtnTraerUF'
+import { useScrollAlResultado } from '../utils/useScrollAlResultado'
+
+
+export default function AbonoCalc() {
+    const [abono, setAbono] = useState('')
+    const [uf, setUf] = useState(() => cargarUF())
+    const [result, setResult] = useState(null)
+    const [error, setError] = useState('')
+    const [modalidad, setModalidad] = useState('extrajudicial')
+    const [calcId, setCalcId] = useState(0)
+    const resultadoRef = useScrollAlResultado(calcId)
+
+
+    function handleCalcular() {
+        setError('')
+        const a = parseCLPInput(abono)
+        const u = parseCLPInput(uf)
+        if (isNaN(a) || a <= 0) { setError('Ingresa un monto de abono válido mayor a 0.'); return }
+        if (modalidad === 'extrajudicial' && (isNaN(u) || u <= 0)) { setError('Ingresa un valor de UF válido.'); return }
+        const r = modalidad === 'judicial'
+            ? calcularCapitalDesdeAbonoJudicial(a, null)
+            : calcularCapitalDesdeAbono(a, u)
+        if (!r) { setError('No se pudo calcular. Revisa los valores.'); return }
+        setResult(r)
+        setCalcId(n => n + 1)
+    }
+
+    function switchModalidad(nueva) {
+        setModalidad(nueva)
+        setResult(null)
+        setError('')
+    }
+
+    const tramos = result
+        ? modalidad === 'judicial'
+            ? [{ label: 'Capital total', monto: result.monto1, pct: '10%', hon: result.hon1 }]
+            : [
+                { label: 'Hasta 10 UF', monto: result.monto1, pct: '9%', hon: result.hon1 },
+                result.monto2 > 0 && { label: '11 a 50 UF', monto: result.monto2, pct: '6%', hon: result.hon2 },
+                result.monto3 > 0 && { label: 'Resto (> 50 UF)', monto: result.monto3, pct: '3%', hon: result.hon3 },
+            ].filter(Boolean)
+        : []
+
+    return (
+        <div className="module-view mv-wide">
+            <div className="mv-header">
+                <span className="mv-icon">💰</span>
+                <h2>Cálculo de Abono</h2>
+            </div>
+            <p className="mv-desc">
+                Ingresa el monto total recibido. El sistema calcula honorarios y capital neto.
+            </p>
+
+            <div className={`calc-layout ${result ? 'two-col' : ''}`}>
+            <div className="form-card">
+                <div className="mode-tabs">
+                    <button
+                        type="button"
+                        className={`mode-tab ${modalidad === 'extrajudicial' ? 'active' : ''}`}
+                        onClick={() => switchModalidad('extrajudicial')}
+                    >
+                        Extrajudicial
+                    </button>
+                    <button
+                        type="button"
+                        className={`mode-tab judicial ${modalidad === 'judicial' ? 'active' : ''}`}
+                        onClick={() => switchModalidad('judicial')}
+                    >
+                        Judicial
+                    </button>
+                </div>
+
+                <div className={`form-row ${modalidad === 'judicial' ? 'single' : ''}`}>
+                    <div className="form-group">
+                        <label>Monto abono total ($ CLP)</label>
+                        <input
+                            type="text"
+                            inputMode="numeric"
+                            placeholder="Ej: 2.072.617"
+                            value={abono}
+                            onChange={e => {
+                                const raw = e.target.value.replace(/\D/g, '')
+                                setAbono(raw === '' ? '' : formatMiles(Number(raw)))
+                            }}
+                            onKeyDown={e => e.key === 'Enter' && handleCalcular()}
+                        />
+                    </div>
+                    {modalidad === 'extrajudicial' && (
+                        <div className="form-group">
+                            <div className="label-row">
+                                <label>Valor UF del día</label>
+                                <BtnTraerUF onUF={v => { setUf(v); guardarUF(v) }} />
+                            </div>
+                            <input
+                                type="text"
+                                inputMode="decimal"
+                                placeholder="Ej: 39.841,72"
+                                value={uf}
+                                onChange={e => setUf(e.target.value)}
+                                onBlur={e => { if (e.target.value) guardarUF(e.target.value) }}
+                                onKeyDown={e => e.key === 'Enter' && handleCalcular()}
+                            />
+                        </div>
+                    )}
+                </div>
+
+                {error && <p className="error-msg">{error}</p>}
+
+                <button className="btn-primary" onClick={handleCalcular}>
+                    Calcular abono
+                </button>
+            </div>
+
+            {result && (
+                <div className="result-card" ref={resultadoRef}>
+                    <div className="result-header">
+                        <div className="rh-left">
+                            <h3>Resultado</h3>
+                            <span key={calcId} className="calc-badge">✓ Calculado</span>
+                        </div>
+                        {result.capitalUF !== null && (
+                            <span className="badge-uf">{result.capitalUF.toFixed(4)} UF</span>
+                        )}
+                    </div>
+
+                    <table className="tranche-table tramos-table">
+                        <thead>
+                            <tr>
+                                <th>Tramo</th>
+                                <th>Monto base</th>
+                                <th>%</th>
+                                <th>Honorarios</th>
+                                <th aria-label="Copiar"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {tramos.map((t, i) => (
+                                <tr key={i}>
+                                    <td className="col-tramo">{t.label}</td>
+                                    <td className="col-base" data-label="Monto base">{formatCLP(t.monto)}</td>
+                                    <td className="col-pct">{t.pct}</td>
+                                    <td className="col-hon" data-label="Honorarios">{formatCLP(t.hon)}</td>
+                                    <td className="col-copy"><CopyBtn value={Math.round(t.hon)} /></td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+
+                    <div className="totals-grid three-cols">
+                        <div className="total-box">
+                            <span className="t-label">Honorarios</span>
+                            <div className="t-row">
+                                <span className="t-value">{formatCLP(result.totalHonorarios)}</span>
+                                <CopyBtn value={Math.round(result.totalHonorarios)} />
+                            </div>
+                        </div>
+                        <div className="total-box highlight-green">
+                            <span className="t-label">Capital neto</span>
+                            <div className="t-row">
+                                <span className="t-value">{formatCLP(result.capital)}</span>
+                                <CopyBtn value={Math.round(result.capital)} />
+                            </div>
+                        </div>
+                        <div className="total-box highlight">
+                            <span className="t-label">Total abono</span>
+                            <div className="t-row">
+                                <span className="t-value">{formatCLP(result.abono)}</span>
+                                <CopyBtn value={Math.round(result.abono)} />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            </div>
+        </div>
+    )
+}

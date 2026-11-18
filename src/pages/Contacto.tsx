@@ -1,4 +1,4 @@
-import { MapPin, Phone } from "lucide-react";
+import { Mail, MapPin, Phone } from "lucide-react";
 import { contacto } from "../data";
 
 export default function Contacto() {
@@ -21,6 +21,15 @@ export default function Contacto() {
             <div>
               <div className="font-serif text-brand">Teléfono</div>
               <div>{contacto.telefono}</div>
+            </div>
+          </li>
+          <li className="flex items-start gap-3">
+            <Mail strokeWidth={1.5} className="mt-0.5 h-5 w-5 shrink-0 text-brand" />
+            <div>
+              <div className="font-serif text-brand">Correo</div>
+              <a href={`mailto:${contacto.correo}`} className="transition-colors hover:text-brand">
+                {contacto.correo}
+              </a>
             </div>
           </li>
         </ul>
