@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { servicios } from "../data";
+import { img } from "../img";
 
 export default function Servicios() {
   const total = servicios.length;
@@ -18,7 +19,15 @@ export default function Servicios() {
   return (
     <>
       <section className="relative flex min-h-[280px] items-center overflow-hidden px-7 py-14 text-white md:min-h-[340px] md:px-12">
-        <img src="/img/servicios-hero.jpg" alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover" />
+        <img
+          src={img("/img/servicios-hero.jpg")}
+          alt=""
+          aria-hidden="true"
+          width={1160}
+          height={773}
+          fetchPriority="high"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(30,32,33,0.85)_0%,rgba(40,42,43,0.55)_50%,rgba(40,42,43,0.25)_100%)]" />
         <div className="relative mx-auto w-full max-w-3xl">
           <div className="mb-2 text-[11px] tracking-[0.2em] text-[#e5e5e5]">SERVICIOS</div>
@@ -43,9 +52,17 @@ export default function Servicios() {
                 className="flex transition-transform duration-500 ease-out"
                 style={{ transform: `translateX(-${actual * 100}%)` }}
               >
-                {servicios.map((s) => (
+                {servicios.map((s, i) => (
                   <article key={s.title} className="flex w-full shrink-0 flex-col sm:flex-row">
-                    <img src={s.img} alt={s.title} className="h-52 w-full object-cover sm:h-auto sm:w-64 sm:shrink-0" />
+                    <img
+                      src={img(s.img)}
+                      alt={s.title}
+                      width={347}
+                      height={347}
+                      loading={i === 0 ? "eager" : "lazy"}
+                      decoding="async"
+                      className="h-52 w-full object-cover sm:h-auto sm:w-64 sm:shrink-0"
+                    />
                     <div className="p-6 sm:p-8">
                       <div className="flex items-center gap-3">
                         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#f6f6f6] text-brand">
@@ -77,17 +94,22 @@ export default function Servicios() {
               <ChevronRight className="h-5 w-5" />
             </button>
 
-            <div className="mt-6 flex justify-center gap-2">
+            <div className="mt-5 flex justify-center gap-0.5">
               {servicios.map((s, i) => (
                 <button
                   key={s.title}
                   type="button"
                   onClick={() => setActual(i)}
                   aria-label={`Ir a ${s.title}`}
-                  className={`h-2 w-2 rounded-full transition-colors ${
-                    i === actual ? "bg-brand" : "bg-[#a09d9d] hover:bg-[#777474]"
-                  }`}
-                />
+                  aria-current={i === actual}
+                  className="group/punto flex h-6 w-6 items-center justify-center"
+                >
+                  <span
+                    className={`h-2 w-2 rounded-full transition-colors ${
+                      i === actual ? "bg-brand" : "bg-[#a09d9d] group-hover/punto:bg-[#777474]"
+                    }`}
+                  />
+                </button>
               ))}
             </div>
           </div>

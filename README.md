@@ -27,25 +27,34 @@ Vite + React 18 + TypeScript, Tailwind CSS, React Router y lucide-react (íconos
 ```
 src/
 ├── App.tsx              menú lateral / menú móvil y pie de página
-├── main.tsx             rutas
+├── rutas.tsx            rutas (las usa el navegador y el pre-renderizado)
 ├── data.ts              servicios, clientes, links, contacto y cuentas de pago
 ├── seo.json             título y descripción de cada página (Google / WhatsApp)
 ├── pages/               una página por archivo (Equipo.tsx tiene los nombres y cargos)
 └── calculadora/         Calculadora Judicial (ver abajo)
 public/
-├── img/                 imágenes (ver img/LEER-fotos.txt)
-├── .htaccess            ruteo y caché para Apache (AgmaHost)
-└── sitemap.xml, robots.txt, favicon, og-image.jpg
-scripts/prerender.mjs    genera un index.html por página con su título y descripción
+├── img/                 imágenes en JPG/PNG (ver LEER-fotos.txt)
+├── .htaccess            redirecciones, URLs limpias, 404, seguridad y caché (AgmaHost)
+└── robots.txt, favicon, og-image.jpg
+scripts/
+├── prerender.mjs        genera el HTML completo de cada página, la 404 y el sitemap
+└── optimizar-imagenes.mjs  convierte las imágenes a WebP del tamaño justo
 ```
+
+### Cómo se publica cada página
+
+`npm run build` genera en `dist/` un archivo HTML **con el contenido ya escrito** por cada
+página (`servicios.html`, `equipo.html`…). Así Google, los analizadores SEO y las vistas
+previas de WhatsApp ven el texto sin ejecutar JavaScript, y el sitio se dibuja antes.
+El `.htaccess` las sirve en direcciones limpias (`/servicios`) y redirige todo a
+`https://www.hadadyasociados.cl` (con www y https).
 
 ### Calculadora Judicial
 
 Los módulos de `src/calculadora/` (Honorarios 3-6-9, Cálculo de abono y Acuerdo de pago)
-vienen del repositorio [cobra369](https://github.com/SebastianGarciaGuerrero/cobra369).
-Si se corrige un cálculo allá, hay que copiar el archivo correspondiente acá.
-`src/calculadora/calculadora.css` adapta sus estilos a los colores del sitio y los limita
-a la sección `.calc369` para que no afecten al resto de las páginas.
+vienen del repositorio cobra369. Si se corrige un cálculo allá, hay que copiar el archivo
+correspondiente acá. `src/calculadora/calculadora.css` adapta sus estilos a los colores del
+sitio y los limita a la sección `.calc369` para que no afecten al resto de las páginas.
 
 ## Cómo correrlo en local
 

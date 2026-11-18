@@ -40,16 +40,17 @@ export const servicios: Servicio[] = [
   },
 ];
 
-export type Cliente = { nombre: string; logo: string };
+// ancho: ancho del archivo del logo (todos miden 100 px de alto)
+export type Cliente = { nombre: string; logo: string; ancho: number };
 
 export const clientes: Cliente[] = [
-  { nombre: "RedSalud", logo: "/img/clientes/redsalud.png" },
-  { nombre: "Clínica Ciudad del Mar", logo: "/img/clientes/clinica-ciudad-del-mar.jpg" },
-  { nombre: "Copec", logo: "/img/clientes/copec.jpg" },
-  { nombre: "Ansaldo", logo: "/img/clientes/ansaldo.jpg" },
-  { nombre: "Hapag-Lloyd", logo: "/img/clientes/hapag-lloyd.jpg" },
-  { nombre: "Inducom", logo: "/img/clientes/inducom.jpg" },
-  { nombre: "Reno", logo: "/img/clientes/reno.jpg" },
+  { nombre: "RedSalud", logo: "/img/clientes/redsalud.png", ancho: 360 },
+  { nombre: "Clínica Ciudad del Mar", logo: "/img/clientes/clinica-ciudad-del-mar.jpg", ancho: 200 },
+  { nombre: "Copec", logo: "/img/clientes/copec.jpg", ancho: 363 },
+  { nombre: "Ansaldo", logo: "/img/clientes/ansaldo.jpg", ancho: 363 },
+  { nombre: "Hapag-Lloyd", logo: "/img/clientes/hapag-lloyd.jpg", ancho: 470 },
+  { nombre: "Inducom", logo: "/img/clientes/inducom.jpg", ancho: 267 },
+  { nombre: "Reno", logo: "/img/clientes/reno.jpg", ancho: 188 },
 ];
 
 export type LinkInteres = { titulo: string; descripcion: string; url: string };

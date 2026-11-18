@@ -1,0 +1,16 @@
+Imágenes del sitio:
+  img/hero.jpg            portada de Inicio
+  img/nosotros.jpg        portada de Nosotros
+  img/servicios-hero.jpg  portada de Servicios
+  img/servicios/          una imagen por servicio (ver src/data.ts)
+  img/clientes/           logos del carrusel de clientes (ver src/data.ts)
+  img/equipo/             fotos del equipo
+
+Para cambiar una foto: reemplaza el archivo por otro con el mismo nombre (JPG o PNG).
+Al publicar, el sitio genera solo una versión liviana (WebP) y del tamaño justo,
+así que puedes subir la foto en buena calidad sin preocuparte del peso.
+
+Los nombres y cargos se editan en src/pages/Equipo.tsx.
+Por privacidad, el staff aparece con nombre y primer apellido, y los archivos de
+foto se llaman igual (ej: sonia-rivera.jpg). Si una foto falta, se muestra un
+recuadro gris con "Foto".

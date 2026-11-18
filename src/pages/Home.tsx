@@ -1,12 +1,21 @@
 import { Link } from "react-router-dom";
 import { servicios, clientes } from "../data";
+import { img } from "../img";
 
 export default function Home() {
   return (
     <>
       {/* Hero con imagen de fondo */}
       <section className="relative flex min-h-[460px] items-center overflow-hidden px-7 py-16 text-white md:min-h-[560px] md:px-12">
-        <img src="/img/hero.jpg" alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover" />
+        <img
+          src={img("/img/hero.jpg")}
+          alt=""
+          aria-hidden="true"
+          width={1500}
+          height={730}
+          fetchPriority="high"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(30,32,33,0.72)_0%,rgba(40,42,43,0.42)_45%,rgba(40,42,43,0.12)_100%)]" />
         <div className="relative mx-auto w-full max-w-3xl">
           <div className="mb-3 text-xs tracking-[0.15em] text-[#e5e5e5]">EMPRESA DE COBRANZAS · VALPARAÍSO</div>
@@ -49,7 +58,11 @@ export default function Home() {
             {[...clientes, ...clientes].map((c, i) => (
               <img
                 key={i}
-                src={c.logo}
+                src={img(c.logo)}
+                width={c.ancho}
+                height={100}
+                loading="lazy"
+                decoding="async"
                 alt={c.nombre}
                 title={c.nombre}
                 aria-hidden={i >= clientes.length}

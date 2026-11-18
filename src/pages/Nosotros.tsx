@@ -1,8 +1,18 @@
+import { img } from "../img";
+
 export default function Nosotros() {
   return (
     <>
       <section className="relative flex min-h-[240px] items-center overflow-hidden px-7 py-14 text-white md:min-h-[300px] md:px-12">
-        <img src="/img/nosotros.jpg" alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover" />
+        <img
+          src={img("/img/nosotros.jpg")}
+          alt=""
+          aria-hidden="true"
+          width={1100}
+          height={400}
+          fetchPriority="high"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(30,32,33,0.82)_0%,rgba(40,42,43,0.5)_50%,rgba(40,42,43,0.22)_100%)]" />
         <div className="relative mx-auto w-full max-w-3xl">
           <div className="mb-2 text-[11px] tracking-[0.2em] text-[#e5e5e5]">NOSOTROS</div>

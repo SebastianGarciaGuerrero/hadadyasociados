@@ -5,6 +5,7 @@ import seo from "./seo.json";
 
 type Pagina = { title: string; description: string };
 const paginas: Record<string, Pagina> = seo.paginas;
+const noEncontrada: Pagina = seo.noEncontrada;
 
 function setMeta(attr: "name" | "property", key: string, value: string) {
   let el = document.head.querySelector<HTMLMetaElement>(`meta[${attr}="${key}"]`);
@@ -18,8 +19,12 @@ function setMeta(attr: "name" | "property", key: string, value: string) {
 
 export function aplicarSeo(pathname: string) {
   const ruta = pathname.length > 1 ? pathname.replace(/\/+$/, "") : pathname;
-  const p = paginas[ruta] ?? paginas["/"];
+  const existe = ruta in paginas;
+  const p = existe ? paginas[ruta] : noEncontrada;
   const url = seo.sitio + (ruta === "/" ? "/" : ruta);
+
+  // Una URL que no existe no debe aparecer en Google
+  setMeta("name", "robots", existe ? "index, follow" : "noindex, follow");
 
   document.title = p.title;
   setMeta("name", "description", p.description);

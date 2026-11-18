@@ -3,6 +3,7 @@ import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { contacto } from "./data";
 import { aplicarSeo } from "./seo";
+import { img } from "./img";
 
 const nav = [
   { label: "Inicio", to: "/" },
@@ -36,7 +37,9 @@ export default function App() {
             className="block cursor-pointer md:w-full"
           >
             <img
-              src="/img/logo.png"
+              src={img("/img/logo.png")}
+              width={352}
+              height={451}
               alt="Hadad & Asociados — Asesoría Legal y Financiera"
               className="w-32 md:mx-auto md:w-44"
             />
@@ -91,15 +94,15 @@ export default function App() {
         <div className="flex-1">
           <Outlet />
         </div>
-        <footer className="bg-[#282a2b] px-4 py-4 text-center text-[#8C8989]">
+        <footer className="bg-[#282a2b] px-4 py-4 text-center text-[#b0adad]">
           <div className="text-[11px]">{contacto.direccion}</div>
-          <div className="mt-1.5 text-[10px] text-[#6f6c6c]">
+          <div className="mt-1.5 text-[10px] text-[#9b9898]">
             Desarrollado por{" "}
             <a
               href="https://sebastiangarcia.cl"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-[#a8a5a5] transition-colors hover:text-white"
+              className="font-medium text-[#d0cdcd] transition-colors hover:text-white"
             >
               sebastiangarcia.cl
             </a>

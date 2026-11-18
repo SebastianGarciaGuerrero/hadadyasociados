@@ -1,11 +1,11 @@
+import { Suspense, lazy, useEffect, useState, type ReactNode } from "react";
 import { useSearchParams } from "react-router-dom";
-import Honorarios369 from "../calculadora/modules/Honorarios369";
-import AbonoCalc from "../calculadora/modules/AbonoCalc";
-import AcuerdoCalc from "../calculadora/modules/AcuerdoCalc";
 import { IconAbono, IconAcuerdo, IconHonorarios } from "../calculadora/components/icons";
-import "../calculadora/calculadora.css";
+import type { IdModulo } from "../calculadora/Modulo";
 
-const modulos = [
+const Modulo = lazy(() => import("../calculadora/Modulo"));
+
+const modulos: { id: IdModulo; label: ReactNode; desc: string; Icono: typeof IconHonorarios }[] = [
   {
     id: "honorarios",
     label: (
@@ -15,29 +15,20 @@ const modulos = [
     ),
     desc: "Gastos de cobranza sobre un capital",
     Icono: IconHonorarios,
-    Modulo: Honorarios369,
   },
-  {
-    id: "abono",
-    label: "Cálculo de abono",
-    desc: "Separa capital y honorarios de un pago",
-    Icono: IconAbono,
-    Modulo: AbonoCalc,
-  },
-  {
-    id: "acuerdo",
-    label: "Acuerdo de pago",
-    desc: "Cuotas, intereses y documento Word",
-    Icono: IconAcuerdo,
-    Modulo: AcuerdoCalc,
-  },
+  { id: "abono", label: "Cálculo de abono", desc: "Separa capital y honorarios de un pago", Icono: IconAbono },
+  { id: "acuerdo", label: "Acuerdo de pago", desc: "Cuotas, intereses y documento Word", Icono: IconAcuerdo },
 ];
 
 export default function Calculadora() {
-  // El módulo elegido queda en la URL (?modulo=abono) para poder compartirlo
+  // El módulo elegido queda en la URL (?modulo=abono) para poder compartirlo.
+  // Se lee recién en el navegador: el HTML pre-renderizado siempre parte en
+  // el primer módulo y así React no encuentra diferencias al activarlo.
   const [params, setParams] = useSearchParams();
-  const actual = modulos.find((m) => m.id === params.get("modulo")) ?? modulos[0];
-  const { Modulo } = actual;
+  const [enNavegador, setEnNavegador] = useState(false);
+  useEffect(() => setEnNavegador(true), []);
+  const pedido = enNavegador ? params.get("modulo") : null;
+  const actual = modulos.find((m) => m.id === pedido) ?? modulos[0];
 
   return (
     <section className="px-4 py-10 sm:px-7 md:px-12 md:py-14">
@@ -69,7 +60,7 @@ export default function Calculadora() {
                 <m.Icono className="h-6 w-6 shrink-0" />
                 <span>
                   <span className="block font-serif text-[13px] leading-tight sm:text-[15px]">{m.label}</span>
-                  <span className={`mt-0.5 hidden text-xs sm:block ${activo ? "text-white/80" : "text-subtle"}`}>
+                  <span className={`mt-0.5 hidden text-xs sm:block ${activo ? "text-white/80" : "text-[#666]"}`}>
                     {m.desc}
                   </span>
                 </span>
@@ -79,7 +70,9 @@ export default function Calculadora() {
         </div>
 
         <div className="calc369 mt-8">
-          <Modulo key={actual.id} />
+          <Suspense fallback={<div className="min-h-[420px]" aria-busy="true" />}>
+            {enNavegador ? <Modulo key={actual.id} id={actual.id} /> : <div className="min-h-[420px]" />}
+          </Suspense>
         </div>
       </div>
     </section>

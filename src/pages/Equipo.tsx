@@ -1,27 +1,29 @@
 import type { SyntheticEvent } from "react";
+import { img } from "../img";
 
 type Persona = { nombre: string; cargo: string; foto: string };
 
 // Para cambiar una foto, reemplaza el archivo en public/img/equipo/ con el mismo nombre.
 const equipo: Persona[] = [
+  // Socios: nombre completo
   { nombre: "Claudio Hadad Varas", cargo: "Ingeniero Comercial", foto: "/img/equipo/claudio-hadad-varas.jpg" },
   { nombre: "Inés Robles Carrasco", cargo: "Abogada", foto: "/img/equipo/ines-robles-carrasco.jpg" },
-  { nombre: "Sonia Rivera Guevara", cargo: "Administración y Finanzas", foto: "/img/equipo/sonia-rivera-guevara.jpg" },
-  { nombre: "Giselle Rojas Vergara", cargo: "Coordinadora de Operaciones", foto: "/img/equipo/giselle-rojas-vergara.jpg" },
-  { nombre: "Gloria Varas Araya", cargo: "Ejecutiva de Cuentas", foto: "/img/equipo/gloria-varas-araya.jpg" },
-  { nombre: "Gilda Chamorro Maldonado", cargo: "Abogada", foto: "/img/equipo/gilda-chamorro-maldonado.jpg" },
-  { nombre: "Sergio Núñez Pizarro", cargo: "Abogado", foto: "/img/equipo/sergio-nunez-pizarro.jpg" },
-  { nombre: "Tania Prieto Varón", cargo: "Abogada", foto: "/img/equipo/tania-prieto-varon.jpg" },
-  { nombre: "Asliduan Tovar Palacios", cargo: "Procuradora", foto: "/img/equipo/asliduan-tovar-palacios.jpg" },
-  { nombre: "Alicia García Venegas", cargo: "Procuradora", foto: "/img/equipo/alicia-garcia-venegas.jpg" },
-  { nombre: "Edelizabeth Márquez Estrada", cargo: "Secretaria jurídica", foto: "/img/equipo/edelizabeth-marquez-estrada.jpg" },
-  { nombre: "Yara Jamett Gómez", cargo: "Gestora de cuentas", foto: "/img/equipo/yara-jamett-gomez.jpg" },
-  { nombre: "Karina Cohen Zambrano", cargo: "Gestora de cuentas", foto: "/img/equipo/karina-cohen-zambrano.jpg" },
-  { nombre: "Sebastián García Guerrero", cargo: "Gestor de cuentas", foto: "/img/equipo/sebastian-garcia-guerrero.jpg?v=2" },
-  { nombre: "Cristian Rueda Fontalvo", cargo: "Gestor de cuentas", foto: "/img/equipo/cristian-rueda-fontalvo.jpg" },
-  { nombre: "Grisel Muñoz Fritz", cargo: "Ejecutiva de terreno", foto: "/img/equipo/grisel-munoz-fritz.jpg" },
-  { nombre: "Margaret Abrigo Olguín", cargo: "Secretaria recepción", foto: "/img/equipo/margaret-abrigo-olguin.jpg" },
-  { nombre: "Mauricio Romero Olivares", cargo: "Coordinador de sistemas informáticos", foto: "/img/equipo/mauricio-romero-olivares.jpg" },
+  // Staff: nombre y primer apellido (por privacidad, en una empresa de cobranza)
+  { nombre: "Sonia Rivera", cargo: "Administración y Finanzas", foto: "/img/equipo/sonia-rivera.jpg" },
+  { nombre: "Giselle Rojas", cargo: "Coordinadora de Operaciones", foto: "/img/equipo/giselle-rojas.jpg" },
+  { nombre: "Gloria Varas", cargo: "Ejecutiva de Cuentas", foto: "/img/equipo/gloria-varas.jpg" },
+  { nombre: "Gilda Chamorro", cargo: "Abogada", foto: "/img/equipo/gilda-chamorro.jpg" },
+  { nombre: "Sergio Núñez", cargo: "Abogado", foto: "/img/equipo/sergio-nunez.jpg" },
+  { nombre: "Tania Prieto", cargo: "Abogada", foto: "/img/equipo/tania-prieto.jpg" },
+  { nombre: "Asliduan Tovar", cargo: "Procuradora", foto: "/img/equipo/asliduan-tovar.jpg" },
+  { nombre: "Alicia García", cargo: "Procuradora", foto: "/img/equipo/alicia-garcia.jpg" },
+  { nombre: "Edelizabeth Márquez", cargo: "Secretaria jurídica", foto: "/img/equipo/edelizabeth-marquez.jpg" },
+  { nombre: "Yara Jamett", cargo: "Gestora de cuentas", foto: "/img/equipo/yara-jamett.jpg" },
+  { nombre: "Karina Cohen", cargo: "Gestora de cuentas", foto: "/img/equipo/karina-cohen.jpg" },
+  { nombre: "Cristian Rueda", cargo: "Gestor de cuentas", foto: "/img/equipo/cristian-rueda.jpg" },
+  { nombre: "Grisel Muñoz", cargo: "Ejecutiva de terreno", foto: "/img/equipo/grisel-munoz.jpg" },
+  { nombre: "Margaret Abrigo", cargo: "Secretaria recepción", foto: "/img/equipo/margaret-abrigo.jpg" },
+  { nombre: "Mauricio Romero", cargo: "Coordinador de sistemas informáticos", foto: "/img/equipo/mauricio-romero.jpg" },
 ];
 
 const socios: Persona[] = [
@@ -79,7 +81,16 @@ function Tarjeta({ nombre, cargo, foto, destacado = false }: Persona & { destaca
   return (
     <article className="group text-center transition-transform duration-300 ease-out hover:-translate-y-2">
       <div className="mb-3 aspect-square w-full overflow-hidden rounded-2xl border border-[#e5e5e5] bg-[#f6f6f6] shadow-sm transition-shadow duration-300 group-hover:shadow-xl">
-        <img src={foto} alt={nombre} className="h-full w-full object-cover" onError={sinFoto} />
+        <img
+          src={img(foto)}
+          alt={nombre}
+          width={600}
+          height={600}
+          loading="lazy"
+          decoding="async"
+          className="h-full w-full object-cover"
+          onError={sinFoto}
+        />
       </div>
       <div className={`font-serif text-brand ${destacado ? "text-base md:text-lg" : "text-sm"}`}>{nombre}</div>
       <div className={`mt-0.5 text-subtle ${destacado ? "text-sm" : "text-xs"}`}>{cargo}</div>

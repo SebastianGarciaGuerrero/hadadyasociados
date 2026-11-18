@@ -1,32 +1,80 @@
-# Hadad & Asociados — sitio estático (Vite/React SPA) para hosting Apache/cPanel
+# Hadad & Asociados — sitio estático pre-renderizado (Vite/React)
+# Hosting AgmaHost (LiteSpeed, compatible con Apache) detrás de Cloudflare.
 
-# 0) Que siempre cargue index.html (aunque quede un index.php viejo de WordPress)
 DirectoryIndex index.html
+Options -Indexes
 
-# 1) Ruteo de la SPA: cualquier ruta que no sea un archivo/carpeta real
-#    se sirve con index.html (para que /servicios, /equipo, etc. funcionen al recargar)
+# Página "no encontrada" con código 404 real (Google no la indexa)
+ErrorDocument 404 /404.html
+
+# Las páginas son archivos (servicios.html): evitar que una carpeta vieja
+# con el mismo nombre provoque una redirección a /servicios/
+<IfModule mod_dir.c>
+  DirectorySlash Off
+</IfModule>
+
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
-  RewriteRule ^index\.html$ - [L]
-  RewriteCond %{REQUEST_FILENAME} !-f
+
+  # 1) Una sola dirección para todo el sitio: https://www.hadadyasociados.cl
+  #    - sin www  → con www
+  #    - http     → https (Cloudflare avisa en X-Forwarded-Proto)
+  RewriteCond %{HTTP_HOST} ^hadadyasociados\.cl$ [NC,OR]
+  RewriteCond %{HTTP:X-Forwarded-Proto} =http
+  RewriteRule ^ https://www.hadadyasociados.cl%{REQUEST_URI} [R=301,L]
+
+  # 2) Archivos internos que no deben verse desde internet:
+  #    archivos ocultos (.htaccess, .ftp-deploy-sync-state.json, .git, .env…)
+  #    salvo /.well-known (lo usa el certificado SSL), y respaldos/comprimidos.
+  RewriteCond %{REQUEST_URI} !^/\.well-known/
+  RewriteRule (^|/)\. - [F,L]
+  RewriteRule \.(zip|rar|7z|tar|gz|sql|bak|old|orig|log|ini|sh|env|md|map|php)$ - [F,L,NC]
+
+  # 3) URLs limpias, una sola versión de cada página:
+  #    /index.html → /      /servicios.html → /servicios      /servicios/ → /servicios
+  RewriteCond %{THE_REQUEST} \s/index\.html[\s?]
+  RewriteRule ^ https://www.hadadyasociados.cl/ [R=301,L]
+  RewriteCond %{THE_REQUEST} \s/([^?\s]+)\.html[\s?]
+  RewriteCond %1 !^404$
+  RewriteRule ^ https://www.hadadyasociados.cl/%1 [R=301,L]
   RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule . /index.html [L]
+  RewriteRule ^(.+)/$ https://www.hadadyasociados.cl/$1 [R=301,L]
+
+  # 4) /servicios → servicios.html (sin cambiar la dirección que se ve)
+  RewriteCond %{REQUEST_FILENAME}.html -f
+  RewriteRule ^([^.]+)$ $1.html [L]
+
+  # Lo que no existe cae en el 404 de arriba (ErrorDocument).
 </IfModule>
 
-# 2) Compresión (gzip) para que cargue más rápido
+# Cabeceras de seguridad (X-Frame-Options, X-Content-Type-Options,
+# Referrer-Policy y HSTS ya las agrega el hosting/Cloudflare).
+<IfModule mod_headers.c>
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=(), browsing-topics=()"
+  # Solo se permite cargar código y recursos del propio sitio y de:
+  # Google Fonts (letras), Google Maps (mapa de Contacto), mindicador.cl y
+  # boostr.cl (UF del día en la calculadora) y Cloudflare (estadísticas).
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://mindicador.cl https://api.boostr.cl https://cloudflareinsights.com; frame-src https://www.google.com https://maps.google.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests"
+</IfModule>
+
+# Caché en el navegador
+<IfModule mod_headers.c>
+  # JS y CSS llevan un código en el nombre que cambia en cada publicación:
+  # se pueden guardar por 1 año sin riesgo de ver una versión vieja.
+  <FilesMatch "\.(js|css|woff2?)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\.(webp|jpe?g|png|gif|svg|ico)$">
+    Header set Cache-Control "public, max-age=2592000"
+  </FilesMatch>
+  # El HTML siempre se revisa, para que se vea al tiro lo último publicado
+  <FilesMatch "\.(html|xml|txt)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>
+
+# Compresión
 <IfModule mod_deflate.c>
-  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml application/javascript application/json image/svg+xml
-</IfModule>
-
-# 3) Caché de los assets (llevan hash en el nombre, se pueden cachear fuerte)
-<IfModule mod_expires.c>
-  ExpiresActive On
-  ExpiresByType text/css "access plus 1 year"
-  ExpiresByType application/javascript "access plus 1 year"
-  ExpiresByType image/jpeg "access plus 6 months"
-  ExpiresByType image/png "access plus 6 months"
-  ExpiresByType image/webp "access plus 6 months"
-  # El HTML no se cachea, para que siempre tome la última versión
-  ExpiresByType text/html "access plus 0 seconds"
+  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml application/xml text/javascript application/javascript application/json image/svg+xml
 </IfModule>

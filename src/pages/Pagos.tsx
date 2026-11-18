@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Building2, Check, Copy } from "lucide-react";
 import { contacto, cuentasPago, type CuentaPago } from "../data";
+import Correo from "../Correo";
 
 function textoParaCopiar(c: CuentaPago) {
   return [
@@ -51,7 +52,9 @@ function TarjetaCuenta({ c }: { c: CuentaPago }) {
         {filas.map(([k, v]) => (
           <div key={k} className="flex flex-col gap-0.5 py-2.5 sm:flex-row sm:justify-between sm:gap-4">
             <dt className="shrink-0 text-subtle">{k}</dt>
-            <dd className="break-words font-medium text-ink sm:text-right sm:break-all">{v}</dd>
+            <dd className="break-words font-medium text-ink sm:text-right sm:break-all">
+              {v.includes("@") ? <Correo correo={v} /> : v}
+            </dd>
           </div>
         ))}
       </dl>

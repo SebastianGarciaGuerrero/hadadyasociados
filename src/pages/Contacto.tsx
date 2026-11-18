@@ -1,5 +1,6 @@
 import { Mail, MapPin, Phone } from "lucide-react";
 import { contacto } from "../data";
+import Correo from "../Correo";
 
 export default function Contacto() {
   return (
@@ -27,9 +28,7 @@ export default function Contacto() {
             <Mail strokeWidth={1.5} className="mt-0.5 h-5 w-5 shrink-0 text-brand" />
             <div>
               <div className="font-serif text-brand">Correo</div>
-              <a href={`mailto:${contacto.correo}`} className="transition-colors hover:text-brand">
-                {contacto.correo}
-              </a>
+              <Correo correo={contacto.correo} className="transition-colors hover:text-brand" />
             </div>
           </li>
         </ul>
