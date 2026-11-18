@@ -1,0 +1,37 @@
+{
+  "sitio": "https://www.hadadyasociados.cl",
+  "paginas": {
+    "/": {
+      "title": "Hadad & Asociados — Empresa de Cobranzas en Valparaíso",
+      "description": "Empresa de cobranzas con más de 30 años de experiencia en Valparaíso. Cobranza extrajudicial y judicial, y asesoría legal y financiera para personas naturales y jurídicas."
+    },
+    "/nosotros": {
+      "title": "Quiénes somos — Hadad & Asociados, Empresa de Cobranzas",
+      "description": "Hadad & Asociados Profesionales Ltda., sociedad con más de 30 años de experiencia en el rubro de la cobranza en Valparaíso. Conoce nuestra historia y a nuestros socios fundadores."
+    },
+    "/servicios": {
+      "title": "Servicios de Cobranza Judicial y Extrajudicial — Hadad & Asociados",
+      "description": "Cobranza extrajudicial y judicial, asesoría legal y financiera, certificado de castigo y verificación de créditos en reorganización o liquidación forzosa. Valparaíso, Chile."
+    },
+    "/equipo": {
+      "title": "Nuestro Equipo — Hadad & Asociados",
+      "description": "Equipo de abogados, procuradores y ejecutivos de cobranza en el área legal, administrativa y comercial, con atención integral a personas naturales y jurídicas."
+    },
+    "/pagos": {
+      "title": "Paga tu cuenta — Datos de transferencia | Hadad & Asociados",
+      "description": "Datos para pagar tu cuenta por transferencia bancaria: Iquique, Elqui, Valparaíso, Santiago, Rancagua, Temuco y Magallanes. Copia los datos y envía tu comprobante."
+    },
+    "/calculadora": {
+      "title": "Calculadora Judicial — Honorarios 3-6-9, abonos y acuerdos | Hadad & Asociados",
+      "description": "Calcula gastos de cobranza extrajudicial con la tabla 3-6-9 en UF y honorarios judiciales, separa capital y honorarios de un abono y arma acuerdos de pago en cuotas."
+    },
+    "/links": {
+      "title": "Links de Interés — Hadad & Asociados",
+      "description": "Enlaces útiles: indicadores económicos, Boletín Concursal, norma de castigos contables del SII, Diario Financiero y situación tributaria de terceros."
+    },
+    "/contacto": {
+      "title": "Contacto — Hadad & Asociados, Valparaíso",
+      "description": "Contáctanos: Errázuriz 1178, Oficina 74, Valparaíso. Teléfono (32) 245 09 90. Correo recepcion@hadadyasociados.cl."
+    }
+  }
+}

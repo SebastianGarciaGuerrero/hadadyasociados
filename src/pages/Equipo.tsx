@@ -1,48 +1,88 @@
-// Equipo antiguo: 16 personas recuperadas del sitio original (fotos en /img/equipo/01-16.jpg).
-// PENDIENTE: reemplazar "nombre" y "cargo" con los datos reales (salen del respaldo .sql).
-const equipo = Array.from({ length: 16 }, (_, i) => ({
-  nombre: `Integrante ${i + 1}`,
-  cargo: "Por completar",
-  foto: `/img/equipo/${String(i + 1).padStart(2, "0")}.jpg`,
-}));
+import type { SyntheticEvent } from "react";
+
+type Persona = { nombre: string; cargo: string; foto: string };
+
+// Para cambiar una foto, reemplaza el archivo en public/img/equipo/ con el mismo nombre.
+const equipo: Persona[] = [
+  { nombre: "Claudio Hadad Varas", cargo: "Ingeniero Comercial", foto: "/img/equipo/claudio-hadad-varas.jpg" },
+  { nombre: "Inés Robles Carrasco", cargo: "Abogada", foto: "/img/equipo/ines-robles-carrasco.jpg" },
+  { nombre: "Sonia Rivera Guevara", cargo: "Administración y Finanzas", foto: "/img/equipo/sonia-rivera-guevara.jpg" },
+  { nombre: "Giselle Rojas Vergara", cargo: "Coordinadora de Operaciones", foto: "/img/equipo/giselle-rojas-vergara.jpg" },
+  { nombre: "Gloria Varas Araya", cargo: "Ejecutiva de Cuentas", foto: "/img/equipo/gloria-varas-araya.jpg" },
+  { nombre: "Gilda Chamorro Maldonado", cargo: "Abogada", foto: "/img/equipo/gilda-chamorro-maldonado.jpg" },
+  { nombre: "Sergio Núñez Pizarro", cargo: "Abogado", foto: "/img/equipo/sergio-nunez-pizarro.jpg" },
+  { nombre: "Tania Prieto Varón", cargo: "Abogada", foto: "/img/equipo/tania-prieto-varon.jpg" },
+  { nombre: "Asliduan Tovar Palacios", cargo: "Procuradora", foto: "/img/equipo/asliduan-tovar-palacios.jpg" },
+  { nombre: "Alicia García Venegas", cargo: "Procuradora", foto: "/img/equipo/alicia-garcia-venegas.jpg" },
+  { nombre: "Edelizabeth Márquez Estrada", cargo: "Secretaria jurídica", foto: "/img/equipo/edelizabeth-marquez-estrada.jpg" },
+  { nombre: "Yara Jamett Gómez", cargo: "Gestora de cuentas", foto: "/img/equipo/yara-jamett-gomez.jpg" },
+  { nombre: "Karina Cohen Zambrano", cargo: "Gestora de cuentas", foto: "/img/equipo/karina-cohen-zambrano.jpg" },
+  { nombre: "Sebastián García Guerrero", cargo: "Gestor de cuentas", foto: "/img/equipo/sebastian-garcia-guerrero.jpg?v=2" },
+  { nombre: "Cristian Rueda Fontalvo", cargo: "Gestor de cuentas", foto: "/img/equipo/cristian-rueda-fontalvo.jpg" },
+  { nombre: "Grisel Muñoz Fritz", cargo: "Ejecutiva de terreno", foto: "/img/equipo/grisel-munoz-fritz.jpg" },
+  { nombre: "Margaret Abrigo Olguín", cargo: "Secretaria recepción", foto: "/img/equipo/margaret-abrigo-olguin.jpg" },
+  { nombre: "Mauricio Romero Olivares", cargo: "Coordinador de sistemas informáticos", foto: "/img/equipo/mauricio-romero-olivares.jpg" },
+];
+
+const socios: Persona[] = [
+  { ...equipo[0], cargo: "Socio Fundador" },
+  { ...equipo[1], cargo: "Socia" },
+];
+const staff = equipo.slice(2);
 
 export default function Equipo() {
   return (
     <section className="px-7 py-14 md:px-12">
       <div className="mx-auto max-w-3xl">
         <div className="mb-2 text-[11px] tracking-[0.15em] text-subtle">NUESTRO EQUIPO</div>
-        <h1 className="font-serif text-2xl text-brand md:text-3xl">Quiénes somos</h1>
-        <p className="mt-3 max-w-xl text-sm leading-relaxed text-ink">
-          Un equipo con amplia experiencia en gestión de cobranza extrajudicial y judicial,
-          comprometido con la recuperación efectiva de acreencias y una atención cercana a
-          cada cliente en Valparaíso y todo el país.
-        </p>
+        <h1 className="font-serif text-2xl text-brand md:text-3xl">Nuestro equipo</h1>
+        <div className="mt-4 max-w-2xl space-y-4 text-sm leading-relaxed text-ink">
+          <p>Nuestra sociedad cuenta con un gran equipo en el área legal, administrativa y comercial.</p>
+          <p>
+            Nuestros profesionales brindan una atención de calidad que nos ha permitido mantener una fiel cartera de
+            clientes, consolidando una atención integral tanto a personas naturales como jurídicas.
+          </p>
+        </div>
 
-        <div className="mt-10 grid grid-cols-2 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {equipo.map((p, i) => (
-            <article key={i} className="text-center">
-              {/* Al dejar la foto en public/img/, se mostrará automáticamente.
-                  Si no existe, se ve el recuadro gris de reemplazo. */}
-              <div className="mb-3 aspect-square w-full overflow-hidden border border-[#e5e5e5] bg-[#f6f6f6]">
-                <img
-                  src={p.foto}
-                  alt={p.nombre}
-                  className="h-full w-full object-cover"
-                  onError={(e) => {
-                    const el = e.currentTarget;
-                    el.style.display = "none";
-                    el.parentElement!.classList.add("flex", "items-center", "justify-center");
-                    el.parentElement!.innerHTML =
-                      '<span class="font-serif text-xs italic text-subtle">Foto</span>';
-                  }}
-                />
-              </div>
-              <div className="font-serif text-sm text-brand">{p.nombre}</div>
-              <div className="text-xs text-subtle">{p.cargo}</div>
-            </article>
+        <div className="mt-10 grid grid-cols-1 gap-8 sm:grid-cols-2">
+          {socios.map((p) => (
+            <Tarjeta key={p.foto} {...p} destacado />
+          ))}
+        </div>
+
+        <div className="mt-14 mb-2 flex items-center gap-4">
+          <span className="h-px flex-1 bg-[#e0dede]" />
+          <span className="font-serif text-sm uppercase tracking-[0.25em] text-subtle">Staff</span>
+          <span className="h-px flex-1 bg-[#e0dede]" />
+        </div>
+
+        <div className="mt-8 grid grid-cols-2 gap-6 sm:grid-cols-3">
+          {staff.map((p) => (
+            <Tarjeta key={p.foto} {...p} />
           ))}
         </div>
       </div>
     </section>
+  );
+}
+
+function Tarjeta({ nombre, cargo, foto, destacado = false }: Persona & { destacado?: boolean }) {
+  // Si la foto no carga, se muestra un recuadro gris con "Foto"
+  function sinFoto(e: SyntheticEvent<HTMLImageElement>) {
+    const img = e.currentTarget;
+    const caja = img.parentElement!;
+    img.style.display = "none";
+    caja.classList.add("flex", "items-center", "justify-center");
+    caja.innerHTML = '<span class="font-serif text-xs italic text-subtle">Foto</span>';
+  }
+
+  return (
+    <article className="group text-center transition-transform duration-300 ease-out hover:-translate-y-2">
+      <div className="mb-3 aspect-square w-full overflow-hidden rounded-2xl border border-[#e5e5e5] bg-[#f6f6f6] shadow-sm transition-shadow duration-300 group-hover:shadow-xl">
+        <img src={foto} alt={nombre} className="h-full w-full object-cover" onError={sinFoto} />
+      </div>
+      <div className={`font-serif text-brand ${destacado ? "text-base md:text-lg" : "text-sm"}`}>{nombre}</div>
+      <div className={`mt-0.5 text-subtle ${destacado ? "text-sm" : "text-xs"}`}>{cargo}</div>
+    </article>
   );
 }

@@ -1,0 +1,32 @@
+# Hadad & Asociados — sitio estático (Vite/React SPA) para hosting Apache/cPanel
+
+# 0) Que siempre cargue index.html (aunque quede un index.php viejo de WordPress)
+DirectoryIndex index.html
+
+# 1) Ruteo de la SPA: cualquier ruta que no sea un archivo/carpeta real
+#    se sirve con index.html (para que /servicios, /equipo, etc. funcionen al recargar)
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>
+
+# 2) Compresión (gzip) para que cargue más rápido
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml application/javascript application/json image/svg+xml
+</IfModule>
+
+# 3) Caché de los assets (llevan hash en el nombre, se pueden cachear fuerte)
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 6 months"
+  ExpiresByType image/png "access plus 6 months"
+  ExpiresByType image/webp "access plus 6 months"
+  # El HTML no se cachea, para que siempre tome la última versión
+  ExpiresByType text/html "access plus 0 seconds"
+</IfModule>

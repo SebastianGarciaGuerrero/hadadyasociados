@@ -1,5 +1,10 @@
-Fotos del equipo (ya puestas, sacadas del WordPress antiguo):
-  gilda.jpeg, tania.jpeg, asly.jpeg, grisel.jpeg
+Imágenes del sitio:
+  img/hero.jpg            portada de Inicio
+  img/nosotros.jpg        portada de Nosotros
+  img/servicios-hero.jpg  portada de Servicios
+  img/servicios/          una imagen por servicio (ver src/data.ts)
+  img/clientes/           logos del carrusel de clientes (ver src/data.ts)
+  img/equipo/             fotos del equipo, con el nombre de cada persona
 
 Para cambiar una foto: reemplaza el archivo por otro con el mismo nombre.
 Los nombres/cargos de cada persona se editan en src/pages/Equipo.tsx

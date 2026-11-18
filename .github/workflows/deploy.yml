@@ -1,0 +1,68 @@
+# Publica el sitio en AgmaHost cada vez que se sube un cambio a la rama main.
+#
+# Configuración (una sola vez), en GitHub:
+#   Settings → Secrets and variables → Actions
+#
+#   Secrets (pestaña "Secrets"):
+#     FTP_SERVER    servidor FTP del hosting (el que muestra cPanel en
+#                   "Cuentas FTP" → "Configurar cliente FTP"). NO usar
+#                   ftp.hadadyasociados.cl: pasa por Cloudflare y no deja pasar FTP.
+#     FTP_USERNAME  usuario FTP (ej: deploy@hadadyasociados.cl)
+#     FTP_PASSWORD  contraseña de esa cuenta FTP
+#
+#   Variables opcionales (pestaña "Variables"):
+#     FTP_SERVER_DIR  carpeta del sitio en el servidor. Por defecto
+#                     "public_html/". Si la cuenta FTP ya entra directo a
+#                     public_html, usar "./".
+#     FTP_PROTOCOL    "ftps" (por defecto, cifrado) o "ftp" si el hosting
+#                     no acepta FTPS.
+#
+# También se puede lanzar a mano desde la pestaña Actions → "Deploy a AgmaHost"
+# → "Run workflow".
+
+name: Deploy a AgmaHost
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Nunca dos publicaciones al mismo tiempo
+concurrency:
+  group: deploy-agmahost
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v4
+
+      - name: Instalar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Compilar el sitio
+        run: npm run build
+
+      - name: Subir a AgmaHost por FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ${{ vars.FTP_PROTOCOL || 'ftps' }}
+          # El certificado del hosting suele ser el del servidor y no el del
+          # dominio; la conexión igual va cifrada.
+          security: loose
+          local-dir: ./dist/
+          server-dir: ${{ vars.FTP_SERVER_DIR || 'public_html/' }}
+          # Solo sube lo que cambió (guarda un registro en el servidor).
+          # No borra nada que no haya subido esta acción (cgi-bin, correo, etc.).
