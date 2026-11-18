@@ -75,6 +75,20 @@ jobs:
           # Solo sube lo que cambió (guarda un registro en el servidor).
           # No borra nada que no haya subido esta acción (cgi-bin, correo, etc.).
 
+      # Borra del servidor archivos sobrantes de subidas manuales antiguas que
+      # quedaron públicos (el "*" hace que no falle si ya no existen).
+      - name: Borrar archivos sobrantes del servidor
+        continue-on-error: true
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          DIR: ${{ vars.FTP_SERVER_DIR || 'public_html/' }}
+        run: |
+          curl -sS --ssl-reqd --user "${FTP_USERNAME}:${FTP_PASSWORD}" "ftp://${FTP_SERVER}/" \
+            -Q "*DELE ${DIR}hadad-sitio-para-subir.zip" -o /dev/null
+          echo "Limpieza hecha"
+
       # Si Cloudflare guarda las páginas en caché, se limpia para que la
       # publicación nueva se vea al tiro. Se salta si no hay token configurado.
       - name: Limpiar caché de Cloudflare
