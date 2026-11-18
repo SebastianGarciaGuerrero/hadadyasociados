@@ -1,85 +1,79 @@
 # Hadad & Asociados — Sitio web
 
-Sitio web corporativo de **Hadad & Asociados**, empresa de cobranzas y estudio jurídico
-ubicado en Valparaíso, Chile. Se dedica a la **cobranza extrajudicial y judicial** y a la
-asesoría legal para personas naturales y jurídicas.
+Sitio web de **Hadad & Asociados**, empresa de cobranzas y estudio jurídico de
+Valparaíso, Chile: cobranza extrajudicial y judicial, y asesoría legal y financiera.
 
-## ¿Qué es este proyecto?
+Publicado en **https://www.hadadyasociados.cl** (hosting AgmaHost, detrás de Cloudflare).
 
-Es la **recreación del antiguo sitio de la empresa**, que originalmente estaba hecho en
-**WordPress** (tema Avada). El objetivo es reconstruirlo lo más parecido posible a como era
-antes, pero sobre una base moderna, más liviana y fácil de mantener, sin depender de WordPress
-ni de sus plugins.
+## Páginas
 
-Todo el contenido y las imágenes (logo, logos de clientes, fotos del equipo) fueron
-**recuperados desde un respaldo del `wp-content`** del sitio original.
+| Ruta | Página |
+|---|---|
+| `/` | Inicio: portada, servicios y carrusel de clientes |
+| `/nosotros` | Quiénes somos |
+| `/servicios` | Áreas de trabajo (carrusel) |
+| `/equipo` | Socios y staff |
+| `/pagos` | Paga tu cuenta: datos de transferencia por clínica |
+| `/calculadora` | **Calculadora Judicial**: honorarios 3-6-9, abonos y acuerdos de pago |
+| `/links` | Links de interés |
+| `/contacto` | Dirección, teléfono, correo y mapa |
 
 ## Tecnologías
 
-- [Vite](https://vitejs.dev/) — empaquetador y servidor de desarrollo
-- [React 18](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/)
-- [Tailwind CSS](https://tailwindcss.com/) — estilos
-- [React Router](https://reactrouter.com/) — navegación entre páginas
-- [lucide-react](https://lucide.dev/) — íconos
+Vite + React 18 + TypeScript, Tailwind CSS, React Router y lucide-react (íconos).
 
-## Estructura
-
-El sitio es **multipágina**, con un menú lateral fijo. Las páginas son:
-
-- **Inicio** (`/`) — presentación, resumen de servicios y logos de clientes
-- **Servicios** (`/servicios`) — cobranza extrajudicial, judicial y asesoría legal
-- **Nuestro Equipo** (`/equipo`) — integrantes del estudio
-- **Contacto** (`/contacto`) — dirección, teléfono y ubicación
+## Dónde se edita cada cosa
 
 ```
-hadadyasociados/
-├── public/img/          # imágenes (logo, clientes/, equipo/, fotos)
-├── src/
-│   ├── App.tsx          # layout con el menú lateral
-│   ├── main.tsx         # rutas (React Router)
-│   ├── data.ts          # datos compartidos (servicios, clientes, contacto)
-│   └── pages/           # Home, Servicios, Equipo, Contacto
-├── tailwind.config.js   # paleta y tipografías
-└── vercel.json          # config de deploy (rewrites para el ruteo)
+src/
+├── App.tsx              menú lateral / menú móvil y pie de página
+├── main.tsx             rutas
+├── data.ts              servicios, clientes, links, contacto y cuentas de pago
+├── seo.json             título y descripción de cada página (Google / WhatsApp)
+├── pages/               una página por archivo (Equipo.tsx tiene los nombres y cargos)
+└── calculadora/         Calculadora Judicial (ver abajo)
+public/
+├── img/                 imágenes (ver img/LEER-fotos.txt)
+├── .htaccess            ruteo y caché para Apache (AgmaHost)
+└── sitemap.xml, robots.txt, favicon, og-image.jpg
+scripts/prerender.mjs    genera un index.html por página con su título y descripción
 ```
 
-### Diseño
+### Calculadora Judicial
 
-- **Colores**: granate `#781010` (marca) con acento rojo `#f05858`, sobre fondo blanco.
-- **Tipografías**: *Antic Slab* (títulos) e *Alef* (cuerpo).
+Los módulos de `src/calculadora/` (Honorarios 3-6-9, Cálculo de abono y Acuerdo de pago)
+vienen del repositorio [cobra369](https://github.com/SebastianGarciaGuerrero/cobra369).
+Si se corrige un cálculo allá, hay que copiar el archivo correspondiente acá.
+`src/calculadora/calculadora.css` adapta sus estilos a los colores del sitio y los limita
+a la sección `.calc369` para que no afecten al resto de las páginas.
 
 ## Cómo correrlo en local
 
-Requiere [Node.js](https://nodejs.org/) instalado.
+Requiere [Node.js](https://nodejs.org/) 20 o superior.
 
 ```bash
-# 1. Instalar dependencias (solo la primera vez)
-npm install
-
-# 2. Levantar el servidor de desarrollo
-npm run dev
-# → abre http://localhost:5173
+npm install      # solo la primera vez
+npm run dev      # → http://localhost:5173
+npm run build    # versión de producción en dist/
+npm run preview  # sirve dist/ localmente
 ```
 
-Otros comandos:
+> En **PowerShell**, si aparece un error de *execution policy*, usa `npm.cmd run dev`.
 
-```bash
-npm run build     # genera la versión optimizada para producción (carpeta dist/)
-npm run preview   # sirve la versión de producción localmente
-```
+## Publicación automática
 
-> En **PowerShell**, si aparece un error de *execution policy*, usa `npm.cmd run dev`
-> o ejecuta una vez `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`.
+Cada `git push` a la rama **main** compila el sitio y lo sube por FTP a `public_html`
+de AgmaHost (ver `.github/workflows/deploy.yml`). Ya no hay que subir archivos a mano.
 
-## Pendientes
+Configuración inicial (una vez), en GitHub → **Settings → Secrets and variables → Actions**:
 
-- [ ] Completar **nombres y cargos** reales del equipo (se obtienen del respaldo `.sql` de
-      la base de datos del WordPress antiguo; las etiquetas actuales son provisorias).
-- [ ] **Optimizar/redimensionar** las fotos del equipo (algunas son de alta resolución).
-- [ ] Incorporar (opcional) la imagen de portada y las imágenes de servicios del sitio original.
-- [ ] **Desplegar** en producción (GitHub + Vercel) para tener una URL pública.
+| Secreto | Valor |
+|---|---|
+| `FTP_SERVER` | servidor FTP que muestra cPanel (no `ftp.hadadyasociados.cl`, que pasa por Cloudflare) |
+| `FTP_USERNAME` | usuario de la cuenta FTP |
+| `FTP_PASSWORD` | contraseña de esa cuenta |
 
-## Despliegue
+Opcionales (pestaña *Variables*): `FTP_SERVER_DIR` (por defecto `public_html/`; usar `./`
+si la cuenta FTP entra directo a `public_html`) y `FTP_PROTOCOL` (`ftps` por defecto, o `ftp`).
 
-Preparado para desplegarse en [Vercel](https://vercel.com/) (incluye `vercel.json` con las
-reglas de *rewrite* necesarias para que el ruteo de una SPA funcione al recargar la página).
+El progreso de cada publicación se ve en la pestaña **Actions** del repositorio.
