@@ -6,9 +6,10 @@
 //  2. Genera 404.html (página no encontrada, marcada como no indexable).
 //  3. Genera sitemap.xml con la fecha de esta publicación.
 //
-// Las páginas quedan como archivos planos (dist/servicios.html); el .htaccess
-// las sirve en /servicios sin redirecciones.
-import { readFileSync, rmSync, writeFileSync } from "node:fs";
+// Cada página queda en su carpeta (dist/servicios/index.html) y su dirección
+// oficial es /servicios/ (con barra final): así funciona con la configuración
+// por defecto de cualquier servidor, sin depender de reglas del .htaccess.
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 import { resolve } from "node:path";
 
@@ -25,7 +26,7 @@ function setMeta(html, attr, key, value) {
 }
 
 function pagina(ruta, p, { indexable = true } = {}) {
-  const url = seo.sitio + (ruta === "/" ? "/" : ruta);
+  const url = seo.sitio + (ruta === "/" ? "/" : `${ruta}/`);
   let html = base.replace(/<title>[^<]*<\/title>/, `<title>${esc(p.title)}</title>`);
   html = setMeta(html, "name", "description", p.description);
   html = setMeta(html, "name", "robots", indexable ? "index, follow" : "noindex, follow");
@@ -44,7 +45,9 @@ function pagina(ruta, p, { indexable = true } = {}) {
 }
 
 for (const [ruta, p] of Object.entries(seo.paginas)) {
-  const archivo = ruta === "/" ? "dist/index.html" : `dist${ruta}.html`;
+  const carpeta = ruta === "/" ? "dist" : `dist${ruta}`;
+  mkdirSync(carpeta, { recursive: true });
+  const archivo = `${carpeta}/index.html`;
   writeFileSync(archivo, pagina(ruta, p));
   console.log(`  ✓ ${archivo}`);
 }
@@ -56,7 +59,7 @@ const hoy = new Date().toISOString().slice(0, 10);
 const prioridad = { "/": "1.0", "/pagos": "0.9", "/servicios": "0.8", "/nosotros": "0.8", "/calculadora": "0.8" };
 const urls = Object.keys(seo.paginas)
   .map((ruta) => {
-    const loc = seo.sitio + (ruta === "/" ? "/" : ruta);
+    const loc = seo.sitio + (ruta === "/" ? "/" : `${ruta}/`);
     return `  <url><loc>${loc}</loc><lastmod>${hoy}</lastmod><priority>${prioridad[ruta] ?? "0.6"}</priority></url>`;
   })
   .join("\n");

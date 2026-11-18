@@ -21,7 +21,8 @@ export function aplicarSeo(pathname: string) {
   const ruta = pathname.length > 1 ? pathname.replace(/\/+$/, "") : pathname;
   const existe = ruta in paginas;
   const p = existe ? paginas[ruta] : noEncontrada;
-  const url = seo.sitio + (ruta === "/" ? "/" : ruta);
+  // Las páginas viven en carpetas (/servicios/), así que la dirección oficial lleva barra final
+  const url = seo.sitio + (ruta === "/" ? "/" : `${ruta}/`);
 
   // Una URL que no existe no debe aparecer en Google
   setMeta("name", "robots", existe ? "index, follow" : "noindex, follow");

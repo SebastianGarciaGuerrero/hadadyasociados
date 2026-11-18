@@ -26,7 +26,7 @@ export default function Home() {
             Más de 30 años de experiencia en cobranza extrajudicial y judicial para personas naturales y jurídicas.
           </p>
           <Link
-            to="/pagos"
+            to="/pagos/"
             className="mt-7 inline-block rounded-sm bg-brand px-6 py-3 text-sm font-medium uppercase tracking-wider text-white shadow transition-colors hover:bg-[#5f0d0d]"
           >
             Paga tu cuenta
@@ -38,7 +38,7 @@ export default function Home() {
       <section className="border-b border-[#ebeaea] px-7 py-12 md:px-12">
         <div className="mx-auto grid max-w-3xl grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-5 lg:gap-6">
           {servicios.map((s) => (
-            <Link key={s.title} to="/servicios" className="group text-center">
+            <Link key={s.title} to="/servicios/" className="group text-center">
               <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-[#f6f6f6] text-brand transition-colors group-hover:bg-brand group-hover:text-white">
                 <s.icon strokeWidth={1.5} className="h-6 w-6" />
               </div>

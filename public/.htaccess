@@ -1,4 +1,6 @@
 # Hadad & Asociados — sitio estático pre-renderizado (Vite/React)
+# Cada página está en su carpeta (servicios/index.html) y funciona aunque el
+# servidor no aplique estas reglas; estas son mejoras extra.
 # Hosting AgmaHost (LiteSpeed, compatible con Apache) detrás de Cloudflare.
 
 DirectoryIndex index.html
@@ -6,12 +8,6 @@ Options -Indexes
 
 # Página "no encontrada" con código 404 real (Google no la indexa)
 ErrorDocument 404 /404.html
-
-# Las páginas son archivos (servicios.html): evitar que una carpeta vieja
-# con el mismo nombre provoque una redirección a /servicios/
-<IfModule mod_dir.c>
-  DirectorySlash Off
-</IfModule>
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
@@ -31,19 +27,13 @@ ErrorDocument 404 /404.html
   RewriteRule (^|/)\. - [F,L]
   RewriteRule \.(zip|rar|7z|tar|gz|sql|bak|old|orig|log|ini|sh|env|md|map|php)$ - [F,L,NC]
 
-  # 3) URLs limpias, una sola versión de cada página:
-  #    /index.html → /      /servicios.html → /servicios      /servicios/ → /servicios
-  RewriteCond %{THE_REQUEST} \s/index\.html[\s?]
-  RewriteRule ^ https://www.hadadyasociados.cl/ [R=301,L]
-  RewriteCond %{THE_REQUEST} \s/([^?\s]+)\.html[\s?]
-  RewriteCond %1 !^404$
+  # 3) Una sola dirección por página (las páginas viven en carpetas: /servicios/)
+  #    /index.html → /     /servicios/index.html → /servicios/     /servicios.html → /servicios/
+  RewriteCond %{THE_REQUEST} \s/(([^?\s]+/)?)index\.html[\s?]
   RewriteRule ^ https://www.hadadyasociados.cl/%1 [R=301,L]
-  RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule ^(.+)/$ https://www.hadadyasociados.cl/$1 [R=301,L]
-
-  # 4) /servicios → servicios.html (sin cambiar la dirección que se ve)
-  RewriteCond %{REQUEST_FILENAME}.html -f
-  RewriteRule ^([^.]+)$ $1.html [L]
+  RewriteCond %{THE_REQUEST} \s/([a-z]+)\.html[\s?]
+  RewriteCond %1 !^404$
+  RewriteRule ^ https://www.hadadyasociados.cl/%1/ [R=301,L]
 
   # Lo que no existe cae en el 404 de arriba (ErrorDocument).
 </IfModule>

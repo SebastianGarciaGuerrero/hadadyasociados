@@ -7,13 +7,13 @@ import { img } from "./img";
 
 const nav = [
   { label: "Inicio", to: "/" },
-  { label: "Nosotros", to: "/nosotros" },
-  { label: "Servicios", to: "/servicios" },
-  { label: "Nuestro Equipo", to: "/equipo" },
-  { label: "Paga tu cuenta", to: "/pagos" },
-  { label: "Calculadora Judicial", to: "/calculadora" },
-  { label: "Links de Interés", to: "/links" },
-  { label: "Contacto", to: "/contacto" },
+  { label: "Nosotros", to: "/nosotros/" },
+  { label: "Servicios", to: "/servicios/" },
+  { label: "Nuestro Equipo", to: "/equipo/" },
+  { label: "Paga tu cuenta", to: "/pagos/" },
+  { label: "Calculadora Judicial", to: "/calculadora/" },
+  { label: "Links de Interés", to: "/links/" },
+  { label: "Contacto", to: "/contacto/" },
 ];
 
 export default function App() {
