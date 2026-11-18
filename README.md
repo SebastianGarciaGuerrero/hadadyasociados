@@ -82,6 +82,10 @@ Configuración inicial (una vez), en GitHub → **Settings → Secrets and varia
 | `FTP_USERNAME` | usuario de la cuenta FTP |
 | `FTP_PASSWORD` | contraseña de esa cuenta |
 
+Opcionales para Cloudflare (pestaña *Secrets*): `CLOUDFLARE_ZONE_ID` y `CLOUDFLARE_API_TOKEN`
+(token con permiso *Zone → Cache Purge*). Si existen, cada publicación limpia el caché de
+Cloudflare, lo que permite que Cloudflare guarde las páginas y el sitio cargue más rápido.
+
 Opcionales (pestaña *Variables*): `FTP_SERVER_DIR` (por defecto `public_html/`; usar `./`
 si la cuenta FTP entra directo a `public_html`) y `FTP_PROTOCOL` (`ftps` por defecto, o `ftp`).
 

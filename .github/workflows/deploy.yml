@@ -17,6 +17,11 @@
 #     FTP_PROTOCOL    "ftps" (por defecto, cifrado) o "ftp" si el hosting
 #                     no acepta FTPS.
 #
+#   Opcional, para que Cloudflare guarde el sitio en caché (carga mucho más rápida)
+#   y lo actualice en cada publicación:
+#     CLOUDFLARE_ZONE_ID    ID de la zona hadadyasociados.cl (Cloudflare → Overview)
+#     CLOUDFLARE_API_TOKEN  token con permiso "Zone → Cache Purge" solo para esa zona
+#
 # También se puede lanzar a mano desde la pestaña Actions → "Deploy a AgmaHost"
 # → "Run workflow".
 
@@ -36,6 +41,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
     steps:
       - name: Descargar el código
         uses: actions/checkout@v4
@@ -66,3 +74,14 @@ jobs:
           server-dir: ${{ vars.FTP_SERVER_DIR || 'public_html/' }}
           # Solo sube lo que cambió (guarda un registro en el servidor).
           # No borra nada que no haya subido esta acción (cgi-bin, correo, etc.).
+
+      # Si Cloudflare guarda las páginas en caché, se limpia para que la
+      # publicación nueva se vea al tiro. Se salta si no hay token configurado.
+      - name: Limpiar caché de Cloudflare
+        if: env.CLOUDFLARE_API_TOKEN != '' && env.CLOUDFLARE_ZONE_ID != ''
+        run: |
+          curl -sS --fail-with-body -X POST \
+            "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/purge_cache" \
+            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            -H "Content-Type: application/json" \
+            --data '{"purge_everything":true}' | grep -o '"success":[a-z]*'
